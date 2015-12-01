@@ -25,8 +25,11 @@ if (!fs.existsSync(repoBaseDir)) {
 }
 
 http.createServer(function(req, res){
+	console.log("req " + req.url)
 	var file = req.url.split('?')[0]
 	file = repoBaseDir + file
+
+	console.log('file', file)
 
 	if (fs.existsSync(file)) {
 		res.end(fs.readFileSync(file))
@@ -42,8 +45,15 @@ http.createServer(function(req, res){
 				fs.mkdirSync(repoDir)
 			}
 
-			var cloneCmd = 'cd ' + repoDir + ' && git clone --bare https://github.com/' + repoAuthorName + '/' + repoName + ' && cd '+ repoName +' && git update-server-info --force'
+			// if (!str(repoName).endswith('.git')) {
+			//	repoName = repoName + '.git'
+			// }
+			// if (repoName.indexOf('.git', repoName.length - '.git'.length) !== -1)
+			//	repoName = repoName + '.git'
 
+			var cloneCmd = 'cd ' + repoDir + ' && git clone --bare git://github.com/' + repoAuthorName + '/' + repoName + ' && cd '+ repoName +' && git update-server-info --force'
+
+			console.log(cloneCmd)
 			exec(cloneCmd, function(error, stdout, stderr){
 				if (!error) {
 					res.end(fs.readFileSync(file))
